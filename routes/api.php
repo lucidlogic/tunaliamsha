@@ -16,3 +16,14 @@ use Illuminate\Http\Request;
 Route::get('/test')
      ->uses(Api\ApiToneController::class . '@show')
      ->name('api.tone.show');
+
+Route::get('/awstest',function(){
+    $s3 = App::make('aws')->createClient('s3');
+    print_r($s3->putObject(array(
+        'Bucket'     => 'jaroapi',
+        'Key'        => 'image-name',
+        'SourceFile' => 'images/bibi.jpg',
+    )));
+
+
+});
