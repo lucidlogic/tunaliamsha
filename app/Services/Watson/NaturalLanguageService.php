@@ -5,9 +5,12 @@ namespace App\Services\Watson;
 use App\Services\Contracts\NaturalLanguageService as Contract;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
+use App\Traits\CanLog;
 
 class NaturalLanguageService implements Contract
 {
+    use CanLog;
+
     /**
      * @var Client
      */
@@ -29,46 +32,29 @@ class NaturalLanguageService implements Contract
     public function analyse(string $text)
     {
         try{
+            $url = config('watson.nlp.url') . '?version=' . config('watson.nlp.version');
+
             $response = $this
                 ->client
                 ->send(
                     new Request(
                         'GET',
-                        config('watson.nlp.url') . '?text=' . $text . '&version=' . config('watson.nlp.version'),
+                        $url . '&text=' . $text ,
                         [
                             'Authorization' => 'Basic ' . base64_encode(config('watson.nlp.username') . ':' . config('watson.nlp.password')),
                             'Content-Type' => 'application/json',
                         ]
                     )
-                );
-            return $this->transform($response);
+                )
+                ->getBody()
+                ->getContents();
+
+            $this->log($url, $text, $response);
+
+            return  $this->transform($response);
         } catch (\Exception $exception) {
             \Log::error($exception);
         }
-    }
-
-    /**
-     * @param string $text
-     *
-     * @return \stdClass
-     */
-    public function personality(string $text)
-    {
-        $response = $this
-            ->client
-            ->send(
-                new Request(
-                    'POST',
-                    config('watson.personality.url') . '?version=' . config('watson.personality.version') . '&consumption_preferences=true&raw_scores=true',
-                    [
-                        'Authorization' => 'Basic ' . base64_encode(config('watson.personality.username') . ':' . config('watson.personality.password')),
-                        'Content-Type' => 'text/plain',
-                    ],
-                    $text
-                )
-            );
-
-        return $this->transform($response);
     }
 
     /**
@@ -78,6 +64,6 @@ class NaturalLanguageService implements Contract
      */
     protected function transform($response): \stdClass
     {
-        return json_decode($response->getBody()->getContents());
+        return json_decode($response);
     }
 }
