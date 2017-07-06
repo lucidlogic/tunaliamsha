@@ -33,17 +33,12 @@ class NaturalLanguageService implements Contract
                 ->client
                 ->send(
                     new Request(
-                        'POST',
-                        config('watson.nlp.url'),
+                        'GET',
+                        config('watson.nlp.url') . '?text=' . $text . '&version=' . config('watson.nlp.version'),
                         [
                             'Authorization' => 'Basic ' . base64_encode(config('watson.nlp.username') . ':' . config('watson.nlp.password')),
                             'Content-Type' => 'application/json',
-                        ],
-                        json_encode([
-                            'text' => $text,
-                            'features' => config('watson.nlp.features'),
-                            'version' => config('watson.nlp.version'),
-                        ])
+                        ]
                     )
                 );
             return $this->transform($response);
