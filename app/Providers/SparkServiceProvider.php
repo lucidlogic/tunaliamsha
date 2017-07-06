@@ -14,9 +14,9 @@ class SparkServiceProvider extends ServiceProvider
      */
     protected $details = [
         'vendor' => 'ROAM',
-        'product' => 'jarot',
+        'product' => 'jaro',
         'street' => "7 Ravenscraig Road…202 Mason's Press",
-        'location' => 'Woodstock…Cape Town 7925',
+        'location' => 'Woodstock Cape Town 7925',
         'phone' => '074 103 68 48',
     ];
 
