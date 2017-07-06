@@ -1,29 +1,25 @@
 <?php
 
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
+| Here is where you can register the API routes for your application as
+| the routes are automatically authenticated using the API guard and
+| loaded automatically by this application's RouteServiceProvider.
 |
 */
 
-Route::get('/test')
-     ->uses(Api\ApiToneController::class . '@show')
-     ->name('api.tone.show');
-
-Route::get('/awstest',function(){
-    $s3 = App::make('aws')->createClient('s3');
-    print_r($s3->putObject(array(
-        'Bucket'     => 'jaroapi',
-        'Key'        => 'image-name',
-        'SourceFile' => 'images/bibi.jpg',
-    )));
+//Route::group([
+//    'middleware' => 'auth:api'
+//], function () {
+//
+//});
 
 
-});
+Route::get('/reports')
+     ->uses(Api\ReportsController::class . '@show')
+     ->middleware('auth:api')
+     ->name('api.reports.show');
+
