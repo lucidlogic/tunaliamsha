@@ -1,9 +1,8 @@
 <?php
 
 
-use App\Services\Contracts\NaturalLanguageService as NaturalLanguageServiceContract;
-use App\Services\Watson\NaturalLanguageService as WatsonService;
-use App\Services\Emoj\NaturalLanguageService as EmojiService;
+use App\Services\Watson\ToneService;
+use App\Services\Contracts\Tone as ToneContract;
 
 // Services
-App::bind(NaturalLanguageServiceContract::class, WatsonService::class);
+App::bind(ToneContract::class, ToneService::class);

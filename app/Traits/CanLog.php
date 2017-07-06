@@ -2,7 +2,7 @@
 
 namespace App\Traits;
 
-use App\Models\ApiLog;
+use App\ApiLog;
 
 trait CanLog
 {
