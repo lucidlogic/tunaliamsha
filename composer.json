@@ -8,7 +8,9 @@
         "php": ">=7.0.0",
         "guzzlehttp/guzzle": "^6.2",
         "laravel/framework": "5.4.*",
-        "laravel/tinker": "~1.0"
+        "laravel/tinker": "~1.0",
+        "laravel/spark": "~4.0",
+        "laravel/cashier": "~7.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
@@ -48,5 +50,11 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "optimize-autoloader": true
-    }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://spark-satis.laravel.com"
+        }
+    ]
 }
