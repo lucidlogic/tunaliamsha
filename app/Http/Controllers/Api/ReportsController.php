@@ -27,10 +27,13 @@ class ReportsController extends Controller
      */
     public function show()
     {
+        $data = request()->all();
+
         $validator = validator(
-            request()->all(),
+            $data,
             [
                 'text' => 'required|max:255|min:3',
+                'listing_id' => 'required|number',
                 'image' => 'url|max:255|min:3',
                 'category' => 'required|max:255|min:3',
                 'price' => 'number',
@@ -38,13 +41,14 @@ class ReportsController extends Controller
         );
 
         if ($validator->fails()) {
-
             return [
                 'success' => false
             ] + $validator->errors()->toArray();
 
         }
-        dd(auth()->user());
-        dd(app(ToneContract::class)->analyse('this fridge sucks'));
+
+        return [
+                   'success' => true
+               ] + $this->reportService->analyse($data);
     }
 }
