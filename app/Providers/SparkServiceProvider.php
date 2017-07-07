@@ -54,13 +54,13 @@ class SparkServiceProvider extends ServiceProvider
 
         Spark::freePlan()
             ->features([
-                'First', 'Second', 'Third'
+                'Advert enhancement'
             ]);
 
         Spark::plan('Basic', 'provider-id-1')
             ->price(10)
             ->features([
-                'First', 'Second', 'Third'
+                'Advert enhancement'
             ]);
     }
 }

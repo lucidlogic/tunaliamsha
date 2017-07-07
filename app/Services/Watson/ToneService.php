@@ -27,7 +27,7 @@ class ToneService implements Contract
     /**
      * @param string $text
      *
-     * @return \stdClass
+     * @return array
      */
     public function analyse(string $text)
     {
@@ -51,19 +51,75 @@ class ToneService implements Contract
 
             $this->log($url, $text, $response);
 
-            return  $this->transform($response);
+            return $this->transform($response);
         } catch (\Exception $exception) {
+
             \Log::error($exception);
+
+            return [
+                'score' => null,
+                'message' => 'tone problem'
+            ];
         }
     }
 
     /**
      * @param $response
      *
-     * @return \stdClass
+     * @return array
      */
-    protected function transform($response): \stdClass
+    protected function transform($response): array
     {
-        return json_decode($response);
+        $result =  json_decode($response);
+
+        list($score, $message) = $this->scoreMessage($result);
+
+        return [
+            'score' => $score,
+            'message' => $message,
+        ];
+    }
+
+    /**
+     * @param $response
+     *
+     * @return array
+     */
+    protected function scoreMessage($response)
+    {
+        list($anger, $disgust, $fear, $joy, $sadness) = $response->document_tone->tone_categories[0]->tones;
+
+        $score = 1;
+        $messages = ['Tone is good :).'];
+
+        if ($anger->score > 0.5) {
+            $score -= 0.25;
+            $message[] = 'Too angry';
+        }
+
+        if ($disgust->score > 0.5) {
+            $score -= 0.25;
+            $message[] = 'Too much disgust';
+        }
+
+        if ($fear->score > 0.5) {
+            $score -= 0.25;
+            $message[] = 'Too much fear';
+        }
+
+        if ($sadness->score > 0.5) {
+            $score -= 0.25;
+            $message[] = 'Too much sadness';
+        }
+
+        if ($joy->score < 0.4) {
+            $score -= 0.25;
+            $message[] = 'Not enough joy.';
+        }
+
+        return [
+            $score,
+            implode(', ', $messages),
+        ];
     }
 }

@@ -8,6 +8,13 @@ use App\Services\ImageService;
 
 class ReportService
 {
+    protected $score;
+
+    /**
+     * @var PriceService
+     */
+    protected $priceService;
+
     /**
      * @var ToneContract
      */
@@ -19,21 +26,22 @@ class ReportService
     protected $imageService;
 
     /**
+     * @param PriceService $priceService
      * @param ToneContract $toneService
      */
     public function __construct(
+        PriceService $priceService,
         ToneContract $toneService
     ) {
+        $this->priceService = $priceService;
         $this->toneService = $toneService;
         $this->imageService = new ImageService();
     }
 
     /**
      * @param array $data
-     *
-     * @return bool
      */
-    public function save(array $data): bool
+    public function save(array $data)
     {
         return Report::create([
             'user_id' => auth()->user()->id,
@@ -55,10 +63,10 @@ class ReportService
     {
         $response = [
             'listing_id' => array_get($data, 'listing_id'),
-            'spelling' => json_encode($this->spelling($data)),
-            'pricing' => $this->pricing($data),
-            'tone' => $this->tone($data),
-            'image' => $this->image($data),
+            'spelling' => $this->spelling($data) ?? [],
+            'pricing' => $this->pricing($data) ?? [],
+            'tone' => $this->tone($data) ?? [],
+            'image' => $this->image($data) ?? [],
         ];
 
         $response['score'] = $this->score($response);
@@ -68,14 +76,29 @@ class ReportService
         return $response;
     }
 
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
     protected function spelling(array $data): array
     {
-
+        return [
+            'score' => 1,
+            'message' => 'spelling is correct',
+        ];
     }
 
-    protected function pricing(array $data)
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function pricing(array $data): array
     {
-
+        return $this
+            ->priceService
+            ->analyse($data);
     }
 
     /**
@@ -95,8 +118,18 @@ class ReportService
         return $this->imageService->analyse($data);
     }
 
+    /**
+     * @param array $data
+     *
+     * @return float
+     */
     protected function score(array $data)
     {
-        return;
+        return collect($data)
+            ->filter(function ($value, $key) {
+                return in_array($key, ['spelling', 'pricing', 'tone', 'image'])
+                    && !is_null(array_get($value, 'score'));
+            })
+            ->avg('score');
     }
 }

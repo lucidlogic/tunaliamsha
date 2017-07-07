@@ -14,3 +14,5 @@
 Route::get('/', 'WelcomeController@show');
 
 Route::get('/home', 'HomeController@show');
+
+Route::get('/get-started', 'PageController@start');
