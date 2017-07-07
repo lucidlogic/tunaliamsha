@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Report;
 use App\Services\Contracts\Tone as ToneContract;
+use App\Services\ImageService;
 
 class ReportService
 {
@@ -13,12 +14,18 @@ class ReportService
     protected $toneService;
 
     /**
+     * @var ImageService
+     */
+    protected $imageService;
+
+    /**
      * @param ToneContract $toneService
      */
     public function __construct(
         ToneContract $toneService
     ) {
         $this->toneService = $toneService;
+        $this->imageService = new ImageService();
     }
 
     /**
@@ -48,7 +55,7 @@ class ReportService
     {
         $response = [
             'listing_id' => array_get($data, 'listing_id'),
-            'spelling' => $this->spelling($data),
+            'spelling' => json_encode($this->spelling($data)),
             'pricing' => $this->pricing($data),
             'tone' => $this->tone($data),
             'image' => $this->image($data),
@@ -85,6 +92,11 @@ class ReportService
 
     protected function image(array $data)
     {
+        return $this->imageService->analyse($data);
+    }
 
+    protected function score(array $data)
+    {
+        return;
     }
 }

@@ -33,10 +33,10 @@ class ReportsController extends Controller
             $data,
             [
                 'text' => 'required|max:255|min:3',
-                'listing_id' => 'required|number',
+                'listing_id' => 'required|numeric',
                 'image' => 'url|max:255|min:3',
                 'category' => 'required|max:255|min:3',
-                'price' => 'number',
+                'price' => 'numeric',
             ]
         );
 
