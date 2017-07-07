@@ -36,7 +36,6 @@ class ReportsController extends Controller
                 'listing_id' => 'required',
                 'image' => 'url|max:255|min:3',
                 'category' => 'required|max:255|min:3',
-                'price' => 'number',
             ]
         );
 
