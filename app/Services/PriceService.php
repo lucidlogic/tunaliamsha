@@ -15,7 +15,7 @@ class PriceService
      */
     public function analyse(array $data): array
     {
-        $category = array_get($data, 'category');
+        $category = str_slug(array_get($data, 'category'));
 
         if (
             !key_exists($category, config('prices'))
