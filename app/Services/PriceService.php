@@ -15,7 +15,7 @@ class PriceService
      */
     public function analyse(array $data): array
     {
-        $category = str_slug(array_get($data, 'category'));
+        $category = $this->category(array_get($data, 'category'));
 
         if (
             !key_exists($category, config('prices'))
@@ -51,5 +51,25 @@ class PriceService
             'score' => $score,
             'message' =>  $message,
         ];
+    }
+
+    /**
+     * @param string $category
+     *
+     * @return string
+     */
+    protected function category(string $category)
+    {
+        $category = str_slug($category);
+
+        if (!key_exists($category, config('prices'))) {
+            $category = str_plural($category);
+        }
+
+        if (!key_exists($category, config('prices'))) {
+            $category = str_singular($category);
+        }
+
+        return $category;
     }
 }
