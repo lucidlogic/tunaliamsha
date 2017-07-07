@@ -35,16 +35,16 @@ class PriceService
 
         if ($price >= $range[0]){
             $score += 0.5;
-            $message = 'price ia too high';
+            $message = 'price is too high';
         }
 
         if ($price <= $range[1]){
             $score += 0.5;
-            $message = 'price ia too low';
+            $message = 'price is too low';
         }
 
         if ($score == 1) {
-            $message = 'price ia appropriate';
+            $message = 'price is appropriate';
         }
 
         return [
