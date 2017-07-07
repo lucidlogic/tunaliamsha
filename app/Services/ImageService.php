@@ -33,47 +33,54 @@ class ImageService
      */
     public function analyse($data)
     {
-        $result = ['score'=>0,'message'=>'Image does not seem to match category, use another'];
+        $result = isset ($data['image']) ? ['score'=>0,'message'=>'Image does not seem to match category, use another'] : ['score'=>0,'message'=>'Image not provided'];
 
-        try {
-            $this->filename = $this->getImageFromUrl($data['image']);
+        if(isset ($data['image'])){
+            $result = ['score'=>0,'message'=>'Image does not seem to match category, use another'];
+            try {
+                $this->filename = $this->getImageFromUrl($data['image']);
 
-            $fp_image = fopen('images/' . $this->filename, 'r');
-            $image = fread($fp_image, filesize('images/' . $this->filename));
-            fclose($fp_image);
+                $fp_image = fopen('images/' . $this->filename, 'r');
+                $image = fread($fp_image, filesize('images/' . $this->filename));
+                fclose($fp_image);
 
-            $response = $this->client->detectLabels([
-                'Image' => [
-                    'Bytes'=>$image
-                ]
-            ]);
+                $response = $this->client->detectLabels([
+                    'Image' => [
+                        'Bytes'=>$image
+                    ]
+                ]);
 
-            foreach ($response['Labels'] as $label) {
-                if (
-                    strpos(
-                        strtolower($label['Name']),
-                        strtolower(str_singular($data['category']))) !== false) {
+                foreach ($response['Labels'] as $label) {
+                    if (
+                        strpos(
+                            strtolower($label['Name']),
+                            strtolower(str_singular($data['category']))) !== false) {
 
-                    if ($label['Confidence'] >= 70) {
-                        $result = ['score'=>1,'message'=>'Image is correct'];
+                        if ($label['Confidence'] >= 70) {
+                            $result = ['score'=>1,'message'=>'Image is correct'];
 
-                        return $result;
-                    }
-                    if ($label['Confidence'] < 70 && $label['Confidence'] >= 40) {
-                        $result = ['score'=>1,'message'=>'Image is correct, but you may want use another'];
-                        return $result;
-                    }
-                    if ($label['Confidence'] < 40) {
-                        return $result;
+                            return $result;
+                        }
+                        if ($label['Confidence'] < 70 && $label['Confidence'] >= 40) {
+                            $result = ['score'=>1,'message'=>'Image is correct, but you may want use another'];
+                            return $result;
+                        }
+                        if ($label['Confidence'] < 40) {
+                            return $result;
+                        }
                     }
                 }
+
+
+            } catch (\Exception $exception) {
+                \Log::error($exception);
             }
-
-            return  $result;
-
-        } catch (\Exception $exception) {
-            \Log::error($exception);
         }
+        else {
+            $result = ['score'=>0,'message'=>'Image not provided'];
+        }
+
+        return  $result;
     }
 
     /**
