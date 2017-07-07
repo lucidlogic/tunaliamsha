@@ -56,16 +56,19 @@ class ImageService
                             strtolower($label['Name']),
                             strtolower(str_singular($data['category']))) !== false) {
 
+                        $score = round($label['Confidence']/100,2);
+
                         if ($label['Confidence'] >= 70) {
-                            $result = ['score'=>1,'message'=>'Image is correct'];
+                            $result = ['score'=>$score,'message'=>'Image is correct'];
 
                             return $result;
                         }
                         if ($label['Confidence'] < 70 && $label['Confidence'] >= 40) {
-                            $result = ['score'=>1,'message'=>'Image is correct, but you may want use another'];
+                            $result = ['score'=>$score,'message'=>'Image is correct, but you may want use another'];
                             return $result;
                         }
                         if ($label['Confidence'] < 40) {
+                            $result = ['score'=>$score,'message'=>'Image does not seem to match category, use another'];
                             return $result;
                         }
                     }
