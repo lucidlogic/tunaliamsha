@@ -88,33 +88,43 @@ class ToneService implements Contract
     protected function scoreMessage($response)
     {
         list($anger, $disgust, $fear, $joy, $sadness) = $response->document_tone->tone_categories[0]->tones;
+        list($openness, $conscientiousness, $extraversion, $agreeableness, $emotionalRange) = $response->document_tone->tone_categories[2]->tones;
 
         $score = 1;
-        $messages = ['Tone is good :).'];
+        $messages = [];
 
         if ($anger->score > 0.5) {
             $score -= 0.25;
-            $message[] = 'Too angry';
+            $messages[] = 'You seem angry, try lighten up a little :)';
         }
 
         if ($disgust->score > 0.5) {
             $score -= 0.25;
-            $message[] = 'Too much disgust';
+            $messages[] = 'You seem quite negative, improve the tone.';
         }
 
         if ($fear->score > 0.5) {
             $score -= 0.25;
-            $message[] = 'Too much fear';
+            $messages[] = "Your words seem fearful, try lightening up a little :)";
         }
 
         if ($sadness->score > 0.5) {
             $score -= 0.25;
-            $message[] = 'Too much sadness';
+            $messages[] = "Don't be so sad :(";
         }
 
         if ($joy->score < 0.4) {
             $score -= 0.25;
-            $message[] = 'Not enough joy.';
+            $messages[] =  "Try lighting the tone a little :)";
+        }
+
+        if ($agreeableness->score < 0.4) {
+            $score -= 0.25;
+            $messages[] = 'Try be more agreeable.';
+        }
+
+        if (empty($messages)) {
+            $messages = ['Great success, your tone is appropriate!'];
         }
 
         return [
