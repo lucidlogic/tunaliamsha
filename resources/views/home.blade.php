@@ -10,7 +10,8 @@
                     <div class="panel-heading">Dashboard</div>
 
                     <div class="panel-body">
-                        Your application's dashboard.
+                        <p>Welcome to jaro.ai!</p>
+                        <p><a href="/get-started">Get started</a> and set up an API key and then you're ready to go.</p>
                     </div>
                 </div>
             </div>
