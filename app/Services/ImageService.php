@@ -33,6 +33,8 @@ class ImageService
      */
     public function analyse($data)
     {
+        $result = ['score'=>0,'message'=>'Image does not seem to match category, use another'];
+
         try {
             $this->filename = $this->getImageFromUrl($data['image']);
 
@@ -47,15 +49,22 @@ class ImageService
             ]);
 
             foreach ($response['Labels'] as $label) {
-                if (strpos($label['Name'], $data['category']) !== false) {
+                if (
+                    strpos(
+                        strtolower($label['Name']),
+                        strtolower(str_singular($data['category']))) !== false) {
+
                     if ($label['Confidence'] >= 70) {
                         $result = ['score'=>1,'message'=>'Image is correct'];
+
+                        return $result;
                     }
                     if ($label['Confidence'] < 70 && $label['Confidence'] >= 40) {
                         $result = ['score'=>1,'message'=>'Image is correct, but you may want use another'];
+                        return $result;
                     }
                     if ($label['Confidence'] < 40) {
-                        $result = ['score'=>0,'message'=>'Image is not correct, use another'];
+                        return $result;
                     }
                 }
             }
