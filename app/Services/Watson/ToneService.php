@@ -115,7 +115,7 @@ class ToneService implements Contract
 
         if ($joy->score < 0.4) {
             $score -= 0.25;
-            $messages[] =  "Try lighting the tone a little :)";
+            $messages[] =  "Where's then joy? Try lighting the tone a little :)";
         }
 
         if ($agreeableness->score < 0.4) {
